@@ -54,7 +54,6 @@
           </v-tooltip>
         </div>
         <div class="tables-container">
-
           <!-- LEADERBOARD -->
           <v-card class="overflow-x-auto leaderboard-container">
             <h2 ref="leaderboardTitle" class="text-center mt-5 mb-5">Leaderboard</h2>
@@ -109,13 +108,14 @@
                 <template #item.points="{ item }">
                   <v-tooltip left open-delay="500" :disabled="item.rankingCompensationPoints === 0">
                     <template #activator="{ on }">
-                      <span :class="{'compensating-points': item.rankingCompensationPoints > 0}" v-on="on">
+                      <span :class="{ 'compensating-points': item.rankingCompensationPoints > 0 }" v-on="on">
                         {{ item.points }}
                       </span>
                     </template>
                     <div class="text-right">
-                      Includes {{ item.rankingCompensationPoints }} {{ item.rankingCompensationPoints === 1 ? 'point' : 'points' }} to compensate<br>
-                      missed or unusually bad games. These points<br>
+                      Includes {{ item.rankingCompensationPoints }}
+                      {{ item.rankingCompensationPoints === 1 ? 'point' : 'points' }} to compensate<br />
+                      missed or unusually bad games. These points<br />
                       disappear over time until the end of the season.
                     </div>
                   </v-tooltip>
@@ -245,10 +245,24 @@
           <div class="dialog-html" v-html="rulesHtml"></div>
         </div>
         <div v-if="!isJoined && canJoin" class="justify-end dialog-buttons mt-3">
-          <v-btn color="accent" depressed @click="joinSeason">
+          <v-btn color="accent" depressed :loading="actionLoading" @click="joinSeason">
             <v-icon left>mdi-plus-circle-outline</v-icon>
             Confirm and Join
           </v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showDiscordJoinPrompt" max-width="800">
+      <v-card class="pa-5">
+        <h2 class="text-center mb-3">Join the Discord</h2>
+        <div>
+          For each game there will be a message thread where <strong>players can talk about the seed</strong> they just
+          played and exchange strategies. When you join the Ori Runs Discord, you will be automatically added to these
+          threads after finishing a game. It's not required to join, although highly recommended. We have cookies!
+        </div>
+        <div class="justify-end dialog-buttons mt-3">
+          <v-btn text :loading="actionLoading" @click="showDiscordJoinPrompt = false"> No, Thanks </v-btn>
+          <v-btn color="accent" depressed :loading="actionLoading" @click="joinDiscord"> Join Discord </v-btn>
         </div>
       </v-card>
     </v-dialog>
@@ -294,6 +308,7 @@
       displayedTab: null,
       showSeasonInfo: false,
       showSeasonRules: false,
+      showDiscordJoinPrompt: false,
       seasonLinkCopied: false,
       refreshTimeoutId: null,
       lurkTimeoutId: null,
@@ -428,7 +443,7 @@
           if (this.leagueSeason.currentGame !== null || this.leagueSeason.nextContinuationAt > Date.now()) {
             this.refreshTimeoutId = setTimeout(() => {
               this.loadSeason()
-            }, Math.max(10000, this.leagueSeason.nextContinuationAt - Date.now()))
+            }, Math.min(3600000, Math.max(10000, this.leagueSeason.nextContinuationAt - Date.now())))
           }
         } catch (e) {
           console.error(e)
@@ -438,7 +453,12 @@
         this.actionLoading = true
 
         try {
-          this.leagueSeason = await this.$axios.$post(`/league/seasons/${this.$route.params.seasonId}/membership`)
+          const response = await this.$axios.$post(`/league/seasons/${this.$route.params.seasonId}/membership`)
+          this.leagueSeason = response.seasonInfo
+
+          if (response.promptToJoinLeagueDiscord) {
+            this.showDiscordJoinPrompt = true
+          }
         } catch (e) {
           console.error(e)
         }
@@ -488,6 +508,15 @@
         })
         this.trainingSeedLoading = false
         this.trainingSeedDialogOpen = false
+      },
+      joinDiscord() {
+        if (isElectron()) {
+          window.electronApi.invoke('launcher.openUrl', { url: 'https://discord.gg/SUS57PWWnA' })
+        } else {
+          window.open('https://discord.gg/SUS57PWWnA')
+        }
+
+        this.showDiscordJoinPrompt = false
       },
     },
   }

@@ -49,8 +49,8 @@ GrenadeRedirect:
 SentryRedirect:
   name: Sentry Redirect
   description: Redirecting projectiles with Sentry
-PauseHover:
-  name: Pause Hover
+PauseFloat:
+  name: Pause Float
   description: Cancelling falling momentum through the pause menu
 GlideJump:
   name: Glide Jump
@@ -70,9 +70,24 @@ WallHammerJump:
 GroundedHammerJump:
   name: Grounded Hammer Jump
   description: Preserving regular Jump momentum with Hammer
-ExtendedHammer:
-  name: Extended Hammer
+HammerExtension:
+  name: Hammer Extension
   description: Extending upwards momentum by swinging Hammer in alternating directions
 SpearJump:
   name: Spear Jump
   description: Storing a grounded jump into the air with Spear
+GlideBashChain:
+  name: Glide Bash Chain
+  description: Cancelling Bash momentum by using Glide to Bash the same object again
+DoubleJumpBashChain:
+  name: Double Jump Bash Chain
+  description: Cancelling Bash momentum by using Double Jump to Bash the same object again
+DashBashChain:
+  name: Dash Bash Chain
+  description: Cancelling Bash momentum by using Dash in the opposite way to Bash the same object again
+LaunchBashChain:
+  name: Launch Bash Chain
+  description: Cancelling Bash momentum by using Launch in the opposite way to Bash the same object again
+Unpopular:
+  name: Unpopular
+  description: Unsafe paths that are unpopular in the community because they are percieved as excessively hard or annoying

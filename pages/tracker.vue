@@ -16,6 +16,7 @@
             :show-willow-hearts="showWillowHearts"
             :time="displayedTime"
             :show-timer="showTimer"
+            :door-count="doorCount"
           />
           <wotw-tracker-teleporters v-if="showTeleporters" :tracked-values="trackedValues" />
         </div>
@@ -129,6 +130,51 @@
       requestedDelay() {
         return Number(this.$route.query.delay ?? 0)
       },
+      doorCount() {
+        const doors = [
+          "door_lupo_shop_door_outside",
+          "door_lupo_shop_door_inside",
+          "door_hut_bentrance",
+          "door_hut_bexit",
+          "door_hut_centrance",
+          "door_hut_cexit",
+          "door_hut_dentrance",
+          "door_hut_dexit",
+          "door_hut_eentrance",
+          "door_hut_eexit",
+          "door_hut_fentrance",
+          "door_hut_fexit",
+          "door_cave_entrance",
+          "door_cave_exit",
+          "door_water_mill_outside_door_a",
+          "door_water_mill_inside_door_a",
+          "door_water_mill_outside_door_b",
+          "door_water_mill_inside_door_b",
+          "door_water_mill_outside_door_c",
+          "door_water_mill_inside_door_c",
+          "door_water_mill_outside_door_d",
+          "door_water_mill_inside_door_d",
+          "door_baurs_reach_hut_entrance",
+          "door_baurs_reach_hut_exit",
+          "door_petrified_hut_door_outside",
+          "door_petrified_hut_door_inside",
+          "door_desert_ruins_entrance_door",
+          "door_door_b", // Outer ruins door
+          "door_willows_end_entrance",
+          "door_willows_end_exit",
+          "door_powl_arena_entrance",
+          "door_powl_arena_exit",
+        ]
+        let count = 0
+
+        for (const door of doors) {
+          if (this.trackedValues[door]) {
+            count++
+          }
+        }
+
+        return count
+      }
     },
     watch: {
       connected: {
